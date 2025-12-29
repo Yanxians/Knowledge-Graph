@@ -8,7 +8,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 
 
 # 设置你的 OpenAI API Key
-os.environ["OPENAI_API_KEY"] = "sk-2HwJCZPfaG9EA7UcySdd44bUFsftmRiTrAaF8FlmtCjtl99H"
+os.environ["OPENAI_API_KEY"] = "别看我害羞，i am shy"
 
 
 TEXT_COLUMN_NAME = 'answer'
@@ -165,4 +165,5 @@ def process_data():
         print(f"\n处理完成！结果已保存至 {OUTPUT_FILE}")
 
 process_data()
+
 
