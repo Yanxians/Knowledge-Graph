@@ -6,7 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate
 import re
 from neo4j import GraphDatabase
 
-os.environ["OPENAI_API_KEY"] = "sk-2HwJCZPfaG9EA7UcySdd44bUFsftmRiTrAaF8FlmtCjtl99H"
+os.environ["OPENAI_API_KEY"] = "不要再看啦"
 
 # 手动指定schema，避免APOC依赖问题
 schema = """
@@ -127,5 +127,6 @@ def tugraph_answer(query):
 
 # 运行
 tugraph_answer("糖尿病可以吃什么药物")
+
 
 tugraph_answer("感冒了应该去哪挂号？")
