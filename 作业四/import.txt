@@ -1,0 +1,56 @@
+LOAD CSV WITH HEADERS FROM 'file:///executive.csv' AS row
+WITH row WHERE row.`person_id:ID(Executive)` IS NOT NULL
+MERGE (e:Executive {id: row.`person_id:ID(Executive)`})
+SET e.name = row.name,
+    e.gender = row.gender,
+    e.age = toInteger(row.`age:int`);
+
+LOAD CSV WITH HEADERS FROM 'file:///industry.csv' AS row
+WITH row WHERE row.`industry_id:ID(Industry)` IS NOT NULL
+MERGE (i:Industry {id: row.`industry_id:ID(Industry)`})
+SET i.name = row.name;
+
+LOAD CSV WITH HEADERS FROM 'file:///stock.csv' AS row
+WITH row WHERE row.`stock_id:ID(Stock)` IS NOT NULL
+MERGE (s:Stock {id: row.`stock_id:ID(Stock)`})
+SET s.name = row.name,
+    s.code = row.code;
+
+LOAD CSV WITH HEADERS FROM 'file:///concept.csv' AS row
+WITH row WHERE row.`concept_id:ID(Concept)` IS NOT NULL
+MERGE (c:Concept {id: row.`concept_id:ID(Concept)`})
+SET c.name = row.name;
+
+
+LOAD CSV WITH HEADERS FROM 'file:///executive_stock.csv' AS row
+// 1. 根据 CSV 里的起始 ID 匹配高管节点
+MATCH (e:Executive {id: row.`:START_ID(Executive)`})
+// 2. 根据 CSV 里的结束 ID 匹配股票节点
+MATCH (s:Stock {id: row.`:END_ID(Stock)`})
+// 3. 创建关系，并将 jobs 字段存入关系属性
+MERGE (e)-[r:EMPLOY_OF]->(s)
+SET r.jobs = row.jobs;
+
+
+LOAD CSV WITH HEADERS FROM 'file:///stock_concept.csv' AS row
+// 1. 匹配股票节点 (注意：这里的 id 必须与之前导入 Stock 时的属性名一致)
+MATCH (s:Stock {id: row.`:START_ID(Stock)`})
+// 2. 匹配概念节点 (注意：这里的 id 必须与之前导入 Concept 时的属性名一致)
+MATCH (c:Concept {id: row.`:END_ID(Concept)`})
+// 3. 创建关系，类型使用 CSV 中的 :TYPE (即 concept_of)
+MERGE (s)-[:CONCEPT_OF]->(c);
+
+
+LOAD CSV WITH HEADERS FROM 'file:///stock_industry.csv' AS row
+// 1. 匹配股票节点
+MATCH (s:Stock {id: row.`:START_ID(Stock)`})
+// 2. 匹配行业节点
+MATCH (i:Industry {id: row.`:END_ID(Industry)`})
+// 3. 创建关系
+MERGE (s)-[:INDUSTRY_OF]->(i);
+
+
+
+Executive: 
+高管节点，具有id、name、gender、age属性  Stock: 股票节点，具有id、name、code属性  Concept: 概念节点，具有id、name属性  Industry: 行业节点，具有id、name属性  
+关系类型：  (Executive)-[:EMPLOY_OF]->(Stock): 高管在公司的任职关系，具有jobs属性  (Stock)-[:CONCEPT_OF]->(Concept): 股票所属的概念板块  (Stock)-[:INDUSTRY_OF]->(Industry): 股票所属的行业分类
