@@ -6,7 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate
 import re
 from neo4j import GraphDatabase
 
-os.environ["OPENAI_API_KEY"] = "sk-2HwJCZPfaG9EA7UcySdd44bUFsftmRiTrAaF8FlmtCjtl99H"
+os.environ["OPENAI_API_KEY"] = "secret"
 
 # 手动指定schema，避免APOC依赖问题
 schema = """
@@ -121,4 +121,5 @@ Executive:  高管节点，具有id、name、gender、age属性  Stock: 股票�
 
 tugraph_answer("介绍一下吴峰这个人",db = 'finance')
 tugraph_answer("介绍一下吴峰的公司",db = 'finance')
+
 tugraph_answer("吴峰的公司是哪个行业的？属于什么概念股？",db = 'finance')
